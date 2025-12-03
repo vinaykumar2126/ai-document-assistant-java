@@ -53,11 +53,12 @@
 		<artifactId>langchain4j</artifactId>
 		<version>0.35.0</version>
 	</dependency>
-	<!-- <dependency>
+	<dependency>
 		<groupId>dev.langchain4j</groupId>
-		<artifactId>langchain4j-memory</artifactId>
-    	<version>0.35.0</version>
-	</dependency> -->
+		<artifactId>langchain4j-document-parser-apache-pdfbox</artifactId>
+		<version>0.32.0</version> <!-- Use the latest version -->
+	</dependency>
+
 
 	<dependency>
 		<groupId>dev.langchain4j</groupId>

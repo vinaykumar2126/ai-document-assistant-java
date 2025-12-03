@@ -39,7 +39,7 @@ public class VectorStoreConfig {
         // Use GoogleAiGeminiChatModel
         return GoogleAiGeminiChatModel.builder()
                 .apiKey(this.apiKey)
-                .modelName("gemini-1.5-flash") // "gemini-pro" is older; 1.5-flash is faster/cheaper
+                .modelName("gemini-2.0-flash") // "gemini-pro" is older; 1.5-flash is faster/cheaper
                 .build();
     }
 }

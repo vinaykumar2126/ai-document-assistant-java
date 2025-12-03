@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat with PDF</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f4f4f9; }
+        .chat-box { height: 500px; overflow-y: scroll; border: 1px solid #ddd; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .message { margin-bottom: 15px; padding: 10px 15px; border-radius: 20px; max-width: 70%; }
+        .user { background-color: #007bff; color: white; margin-left: auto; }
+        .bot { background-color: #e9ecef; color: #333; margin-right: auto; }
+        .controls { display: flex; gap: 10px; margin-top: 20px; }
+        input[type="text"] { flex-grow: 1; padding: 10px; border-radius: 5px; border: 1px solid #ddd; }
+        button { padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #218838; }
+        #upload-status { margin-top: 10px; color: #666; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <h2>🤖 Chat with Your Documents</h2>
+
+    <div style="margin-bottom: 20px; padding: 15px; background: #fff; border-radius: 8px;">
+        <input type="file" id="pdfFile" placeholder="Enter filename (e.g., resume.pdf)">
+        <button onclick="uploadFile()">upload File</button>
+        <div id="upload-status"></div>
+    </div>
+
+    <div class="chat-box" id="chatBox"></div>
+    
+    <div class="controls">
+        <input type="text" id="userInput" placeholder="Ask a question about the document..." onkeypress="handleEnter(event)">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        async function uploadFile() {
+            const fileInput = document.getElementById('pdfFile');
+            const file = fileInput.files[0];
+            const status = document.getElementById('upload-status');
+            status.innerText = "Processing...";
+
+            const formData = new FormData();
+            formData.append("file", file);
+            
+            try {
+                // Calls your Upload Controller
+                const response = await fetch(`/api/ai/ingest/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.text();
+                status.innerText = "✅ " + result;
+            } catch (e) {
+                status.innerText = "❌ Error: " + e.message;
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const chatBox = document.getElementById('chatBox');
+            const question = input.value;
+            if (!question) return;
+
+            // Add User Message to UI
+            chatBox.innerHTML += `<div class="message user">${question}</div>`;
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Add Loading Placeholder
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message bot';
+            loadingDiv.innerText = 'Thinking...';
+            chatBox.appendChild(loadingDiv);
+
+            try {
+                // Calls your Chat Controller
+                const response = await fetch(`/api/ai/ask?question=${encodeURIComponent(question)}`);
+                const answer = await response.text();
+                
+                // Replace Loading with Real Answer
+                loadingDiv.innerText = answer;
+            } catch (e) {
+                loadingDiv.innerText = "Error: Could not connect to bot.";
+            }
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function handleEnter(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+    </script>
+</body>
+</html>
