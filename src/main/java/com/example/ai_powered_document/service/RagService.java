@@ -1,7 +1,6 @@
 package com.example.ai_powered_document.service;
 import org.springframework.stereotype.Service;
 import dev.langchain4j.chain.ConversationalRetrievalChain;
-
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingStore;
