@@ -8,6 +8,10 @@ import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.data.document.parser.apache.pdfbox.ApachePdfBoxDocumentParser;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import java.io.InputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 
 import java.util.List;
@@ -26,16 +30,36 @@ public class DocumentIngestionService {
         this.embeddingStore = embeddingStore;
     }
     public void ingest(MultipartFile file){
-        try{
-            Document doc = new ApachePdfBoxDocumentParser().parse(file.getInputStream());
-            DocumentSplitter splitter = DocumentSplitters.recursive(1000, 200);//(maxSegmentSize, int overlapSize)
-                    
-            List<TextSegment> segments = splitter.split(doc);
+        try {
+        String fileName = file.getOriginalFilename();
+        String text;
 
-            for(TextSegment chunk : segments){   // Makes the chunks smaller for better embeddings. Can't pass whole book because llm may not handle that size.
-                Embedding embedding = embeddingModel.embed(chunk).content();  // Embedding is just a placeholder for holding the embedding result
-                embeddingStore.add(embedding, chunk);
+        if (fileName.endsWith(".pdf")) {
+            Document doc = new ApachePdfBoxDocumentParser().parse(file.getInputStream());
+            text = doc.text();
+        } else if (fileName.endsWith(".txt")) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+                text = reader.lines().reduce("", (a, b) -> a + "\n" + b);
             }
+        } else if (fileName.endsWith(".docx")) {
+            try (InputStream is = file.getInputStream()) {
+                XWPFDocument docx = new XWPFDocument(is);
+                text = docx.getParagraphs().stream()
+                        .map(p -> p.getText())
+                        .reduce("", (a, b) -> a + "\n" + b);
+            }
+        } else {
+            throw new RuntimeException("Unsupported file type: " + fileName);
+        }
+        Document doc = new Document(text);
+        DocumentSplitter splitter = DocumentSplitters.recursive(1000, 200);
+        List<TextSegment> segments = splitter.split(doc);
+
+        for (TextSegment chunk : segments) {
+            Embedding embedding = embeddingModel.embed(chunk).content();
+            embeddingStore.add(embedding, chunk);
+        }
+
         }catch(Exception e){
             throw new RuntimeException("Failed to ingest document: " + e.getMessage());
         }
