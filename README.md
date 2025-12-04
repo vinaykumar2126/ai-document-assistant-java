@@ -1,6 +1,6 @@
 ## 🚀 AI Document Assistant - Chat with Document
 
-![whatsup?](./src/main/resources/chat2.png)
+![whatsup?](./src/main/resources/static/chat2.png)
 
 Welcome to **AI Document Assistant**!  
 Chat with your PDFs and documents using the power of RAG and Gemini.
@@ -18,10 +18,10 @@ Chat with your PDFs and documents using the power of RAG and Gemini.
 ### 💡 How It Works
 
 1. **Ingest your document**  
-   ![Ingest Screenshot](./src/main/resources/chat4.java.png)
+   ![Ingest Screenshot](./src/main/resources/static/chat4.java.png)
 
 2. **Ask questions**  
-   ![Chat Screenshot](./src/main/resources/chat5.png)
+   ![Chat Screenshot](./src/main/resources/static/chat5.png)
 
 3. **Get answers powered by AI!**
 
