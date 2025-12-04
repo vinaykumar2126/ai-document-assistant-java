@@ -18,7 +18,7 @@ Chat with your PDFs and documents using the power of RAG and Gemini.
 ### 💡 How It Works
 
 1. **Ingest your document**  
-   <img src="./src/main/resources/static/chat4.png" alt="Ingest Screenshot" width="400"/>
+   <img src="./src/main/resources/static/chat4.java.png" alt="Ingest Screenshot" width="400"/>
 
 2. **Ask questions**  
    <img src="./src/main/resources/static/chat5.png" alt="Chat Screenshot" width="400"/>
