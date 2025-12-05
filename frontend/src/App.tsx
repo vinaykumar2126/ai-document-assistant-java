@@ -1,56 +1,93 @@
-import { useState } from 'react'
+import { useState, lazy, Suspense } from 'react';
+import './styles/App.css';
 
-interface Message{
+const FileUpload = lazy(() => import('./components/FileUpload'));
+const ChatBox = lazy(() => import('./components/ChatBox'));
+const ChatInput = lazy(() => import('./components/ChatInput'));
+
+interface Message {
   text: string;
   isUser: boolean;
 }
 
 function App() {
-  const [status, setStatus] = useState('')
-  const [selectedFile,setSelectedFile] = useState<File | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isDocumentLoaded, setIsDocumentLoaded] = useState(false);
 
+  const handleSendMessage = async (question: string) => {
+    // Add user's message to the chat
+    setMessages(prev => [...prev, { text: question, isUser: true }]);
 
-  const handleFileSelect = (e:React.ChangeEvent<HTMLInputElement>)=>{
-    const file = e.target.files?.[0] || null;
+    // Add a temporary "Thinking..." message from the bot
+    setMessages(prev => [...prev, { text: 'Thinking...', isUser: false }]);
 
-    if (file){
-      setSelectedFile(file);
-    }
- }
-  const uploadFile = async()=>{
-    if(!selectedFile){
-      setStatus('Please select a file first');
-      return;
-    }
+    try {
+      // Fetch the real answer from the API
+      const response = await fetch(`http://localhost:8080/api/ai/ask?question=${encodeURIComponent(question)}`);
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
+      const answer = await response.text();
 
-    setStatus('Uploading...');
-
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-
-    try{
-      const response = await fetch('http://localhost:5000/upload', {
-        method: 'POST',
-        body: formData,
+      // Replace "Thinking..." with the actual answer
+      setMessages(prev => {
+        const updatedMessages = [...prev];
+        const lastMessageIndex = updatedMessages.length - 1;
+        if (lastMessageIndex >= 0 && updatedMessages[lastMessageIndex].text === 'Thinking...') {
+          updatedMessages[lastMessageIndex] = { text: answer, isUser: false };
+        }
+        return updatedMessages;
       });
-      const result = await response.text();
 
-      setStatus(`Upload successful: ${result}`);
-      
-    }catch(error){
-      setStatus('Upload failed');
-      console.error('Error uploading file:', error);
+    } catch (error) {
+      console.error("Error fetching AI response:", error);
+      // If there's an error, update the message to show it
+      setMessages(prev => {
+        const updatedMessages = [...prev];
+        const lastMessageIndex = updatedMessages.length - 1;
+        if (lastMessageIndex >= 0 && updatedMessages[lastMessageIndex].text === 'Thinking...') {
+          updatedMessages[lastMessageIndex] = { text: 'Error: Could not get a response.', isUser: false };
+        }
+        return updatedMessages;
+      });
     }
-  }
+  };
 
   return (
-    <div>
-      <h2>🤖 Chat with Your Documents</h2>
-      <input type = "file" onChange={handleFileSelect} />
-      <button onClick={uploadFile}>Upload</button>
-      <p>{status}</p>
+    <div className="app">
+      <header className="app-header">
+        <div className="logo">
+          <span className="logo-icon">📚</span>
+          <h1>AI Document Assistant</h1>
+        </div>
+        <p className="tagline">Chat with your documents using AI</p>
+      </header>
+
+      <div className="container">
+        <Suspense fallback={<div className="loading-spinner">Loading...</div>}>
+          <FileUpload onUploadSuccess={() => setIsDocumentLoaded(true)} />
+        </Suspense>
+
+        {isDocumentLoaded ? (
+          <>
+            <Suspense fallback={<div className="loading-spinner">Loading chat...</div>}>
+              <ChatBox messages={messages} />
+            </Suspense>
+
+            <Suspense fallback={<div className="loading-spinner">Loading input...</div>}>
+              <ChatInput onSend={handleSendMessage} />
+            </Suspense>
+          </>
+        ):(
+          <div className="empty-state">
+            <div className="empty-icon">📄</div>
+            <h3>No document uploaded yet</h3>
+            <p>Upload a document to start chatting with AI</p>
+          </div>
+        )}
+      </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
