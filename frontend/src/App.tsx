@@ -1,11 +1,10 @@
-import { useState, lazy, Suspense } from 'react';
+import { useState, lazy, Suspense, useEffect } from 'react';
 import './styles/App.css';
 
 const FileUpload = lazy(() => import('./components/FileUpload'));
 const ChatBox = lazy(() => import('./components/ChatBox'));
 const ChatInput = lazy(() => import('./components/ChatInput'));
 const Login = lazy(() => import('./components/Login'));
-
 
 interface Message {
   text: string;
@@ -15,24 +14,48 @@ interface Message {
 function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isDocumentLoaded, setIsDocumentLoaded] = useState(false);
-  const [isLoggedIn,setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);  // Loading state
+
+  // ✅ CHECK TOKEN ON APP LOAD (AUTO-LOGIN)
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      // Token exists! User is already logged in
+      console.log('Token found in localStorage - auto-login');
+      setIsLoggedIn(true);
+    } else {
+      // No token, user needs to log in
+      console.log('No token found - showing login');
+      setIsLoggedIn(false);
+    }
+    setIsCheckingAuth(false);  // Done checking
+  }, []);
 
   const handleSendMessage = async (question: string) => {
-    // Add user's message to the chat
     setMessages(prev => [...prev, { text: question, isUser: true }]);
-
-    // Add a temporary "Thinking..." message from the bot
     setMessages(prev => [...prev, { text: 'Thinking...', isUser: false }]);
 
     try {
-      // Fetch the real answer from the API
-      const response = await fetch(`http://localhost:8080/api/ai/ask?question=${encodeURIComponent(question)}`);
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(`http://localhost:8080/api/ai/ask?question=${encodeURIComponent(question)}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
       if (!response.ok) {
+        // ✅ Token expired or invalid
+        if (response.status === 401) {
+          localStorage.removeItem('authToken');
+          setIsLoggedIn(false);  // Force re-login
+          return;
+        }
         throw new Error(`API request failed with status ${response.status}`);
       }
+      
       const answer = await response.text();
 
-      // Replace "Thinking..." with the actual answer
       setMessages(prev => {
         const updatedMessages = [...prev];
         const lastMessageIndex = updatedMessages.length - 1;
@@ -44,7 +67,6 @@ function App() {
 
     } catch (error) {
       console.error("Error fetching AI response:", error);
-      // If there's an error, update the message to show it
       setMessages(prev => {
         const updatedMessages = [...prev];
         const lastMessageIndex = updatedMessages.length - 1;
@@ -56,7 +78,21 @@ function App() {
     }
   };
 
-  if(!isLoggedIn){
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('username');
+    setIsLoggedIn(false);
+    setMessages([]);
+    setIsDocumentLoaded(false);
+  };
+
+  // Show loading while checking auth
+  if (isCheckingAuth) {
+    return <div className="loading-spinner">Checking authentication...</div>;
+  }
+
+  // Show login if not logged in
+  if (!isLoggedIn) {
     return (
       <Suspense fallback={<div className="loading-spinner">Loading login...</div>}>
         <Login onLoginSuccess={() => setIsLoggedIn(true)} />
@@ -64,6 +100,7 @@ function App() {
     );
   }
 
+  // Show main app if logged in
   return (
     <div className="app">
       <header className="app-header">
@@ -72,6 +109,9 @@ function App() {
           <h1>AI Document Assistant</h1>
         </div>
         <p className="tagline">Chat with your documents using AI</p>
+        <button onClick={handleLogout} className="logout-button">
+          Logout
+        </button>
       </header>
 
       <div className="container">
@@ -89,7 +129,7 @@ function App() {
               <ChatInput onSend={handleSendMessage} />
             </Suspense>
           </>
-        ):(
+        ) : (
           <div className="empty-state">
             <div className="empty-icon">📄</div>
             <h3>No document uploaded yet</h3>
