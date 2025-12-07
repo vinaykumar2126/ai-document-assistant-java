@@ -42,4 +42,4 @@ public class VectorStoreConfig {
                 .modelName("gemini-2.0-flash") // "gemini-pro" is older; 1.5-flash is faster/cheaper
                 .build();
     }
-}
+}            

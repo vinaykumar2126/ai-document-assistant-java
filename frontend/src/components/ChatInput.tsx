@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 interface ChatInputProps {
-  onSend: (text: string) => void;
+  onSend: (text: string) => void | Promise<void>;
 }
 
 function ChatInput({ onSend }: ChatInputProps) {

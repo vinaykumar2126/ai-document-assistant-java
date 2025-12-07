@@ -4,6 +4,8 @@ import './styles/App.css';
 const FileUpload = lazy(() => import('./components/FileUpload'));
 const ChatBox = lazy(() => import('./components/ChatBox'));
 const ChatInput = lazy(() => import('./components/ChatInput'));
+const Login = lazy(() => import('./components/Login'));
+
 
 interface Message {
   text: string;
@@ -13,6 +15,7 @@ interface Message {
 function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isDocumentLoaded, setIsDocumentLoaded] = useState(false);
+  const [isLoggedIn,setIsLoggedIn] = useState(false);
 
   const handleSendMessage = async (question: string) => {
     // Add user's message to the chat
@@ -52,6 +55,14 @@ function App() {
       });
     }
   };
+
+  if(!isLoggedIn){
+    return (
+      <Suspense fallback={<div className="loading-spinner">Loading login...</div>}>
+        <Login onLoginSuccess={() => setIsLoggedIn(true)} />
+      </Suspense>
+    );
+  }
 
   return (
     <div className="app">

@@ -19,7 +19,7 @@ function ChatBox({ messages }: ChatBoxProps) {
   }, [messages]);
 
   return (
-    <div className="chat-box" ref={chatBoxRef}>
+    <div className="chat-box" ref={chatBoxRef}>  {/* Added ref for actual connection to div in the UI */}
       {messages.map((msg, idx) => (
         <div key={idx} className={`message ${msg.isUser ? 'user' : 'bot'}`}>
           {msg.text}

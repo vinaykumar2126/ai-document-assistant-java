@@ -48,3 +48,18 @@ This pattern keeps your code simple and lets you swap strategies easily.
 It returns a builder object for the class.
 The builder lets you set up (configure) all the options you want, step by step, using method chaining.
 When you’re done, you call .build() to create the final object.
+
+
+## 
+A MultipartFile is a Spring interface that represents an uploaded file received in a multipart/form-data HTTP request (such as a file upload form).
+It lets you access the file’s content, name, size, and other properties in your controller or service.
+
+## @RequestParam("file")
+
+tells Spring to look for a form field or query parameter named "file" in the incoming HTTP request and bind its value to the MultipartFile file argument.
+
+The client uploads a file using a form field named "file".
+Spring maps that uploaded file to the MultipartFile file parameter in your controller method.
+
+Summary:
+@RequestParam("file") MultipartFile file lets you receive a single uploaded file from a form field called "file".

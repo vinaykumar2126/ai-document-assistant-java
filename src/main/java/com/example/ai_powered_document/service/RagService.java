@@ -1,4 +1,5 @@
 package com.example.ai_powered_document.service;
+import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.springframework.stereotype.Service;
 import dev.langchain4j.chain.ConversationalRetrievalChain;
 import dev.langchain4j.model.chat.ChatLanguageModel;
@@ -22,6 +23,14 @@ public class RagService {
 
      }
      public String ask(String question) {
-        return chain.execute(question);
+        try{
+            String result =  chain.execute(question);
+            return result;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;  // Re-throw so controller catches it
+        }
     }
 }
+        

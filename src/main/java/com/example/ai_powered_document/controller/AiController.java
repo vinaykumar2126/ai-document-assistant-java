@@ -19,6 +19,7 @@ public class AiController {
 
     @PostMapping("/ingest/upload")
     public String ingest(@RequestParam("file") MultipartFile file) {
+        System.out.println("Received file: " + file.getOriginalFilename());
         ingestionService.ingest(file);
         return "Document ingested successfully!";
     }
