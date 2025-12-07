@@ -22,7 +22,7 @@ function FileUpload({ onUploadSuccess }: FileUploadProps) {
         method: 'POST',
         body: formData,
       });
-      const result = await response.text();
+      // const result = await response.text();
       setStatus('success');
       if (onUploadSuccess) onUploadSuccess();
     } catch (error) {

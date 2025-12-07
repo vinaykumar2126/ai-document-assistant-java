@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import '../styles/login.css';
+import axios from 'axios';
 
 interface LoginProps {
   onLoginSuccess: () => void;
@@ -17,17 +18,24 @@ function Login({ onLoginSuccess }: LoginProps) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
+      const response = await axios.post('http://localhost:8080/api/auth/login', {
+        username,
+        password,
       });
+      // const response = await fetch('http://localhost:8080/api/auth/login', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({ username, password }),
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success) {
+      if (response) {
+        const data = response.data;
+        console.log('Login response data:', data);
+        if (data.success && data.token) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('username', username);
+          // console.log('Login successful, token stored.', + data.token);
           onLoginSuccess();
         } else {
           setError(data.message || 'Login failed');
@@ -87,7 +95,7 @@ function Login({ onLoginSuccess }: LoginProps) {
         </form>
 
         <div className="login-footer">
-          <p>Demo credentials: admin / password123</p>
+          <p>© 2024 AI Document Assistant. All rights reserved.</p>
         </div>
       </div>
     </div>

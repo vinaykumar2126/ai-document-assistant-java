@@ -19,7 +19,7 @@ function App() {
 
   // ✅ CHECK TOKEN ON APP LOAD (AUTO-LOGIN)
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('token');
     if (token) {
       // Token exists! User is already logged in
       console.log('Token found in localStorage - auto-login');
@@ -37,7 +37,7 @@ function App() {
     setMessages(prev => [...prev, { text: 'Thinking...', isUser: false }]);
 
     try {
-      const token = localStorage.getItem('authToken');
+      const token = localStorage.getItem('token');
       const response = await fetch(`http://localhost:8080/api/ai/ask?question=${encodeURIComponent(question)}`, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -47,7 +47,7 @@ function App() {
       if (!response.ok) {
         // ✅ Token expired or invalid
         if (response.status === 401) {
-          localStorage.removeItem('authToken');
+          localStorage.removeItem('token');
           setIsLoggedIn(false);  // Force re-login
           return;
         }
@@ -79,7 +79,7 @@ function App() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('token');
     localStorage.removeItem('username');
     setIsLoggedIn(false);
     setMessages([]);
