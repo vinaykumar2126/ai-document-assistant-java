@@ -4,6 +4,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -11,8 +13,10 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
+    @Value("${jwt.secret}")
+    private String secret;
     private SecretKey key;
-    private final String secret = "replace-with-strong-256-bit-secret-or-read-from-config"; // 32+ bytes
+
     private final long jwtExpirationMs = 86400000L;
 
     @PostConstruct
