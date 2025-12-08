@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import com.example.ai_powered_document.security.JwtAuthFilter;
+import com.example.ai_powered_document.security.OAuth2LoginSuccessHandler;
 
 import org.springframework.http.HttpMethod;
 
@@ -22,6 +23,8 @@ public class SecurityConfig {
     
     @Autowired
     private JwtAuthFilter jwtAuthFilter;
+    @Autowired
+    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -35,9 +38,14 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-             .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
+             .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+             .requestMatchers("/oauth/**","/login/oauth2/**").permitAll() // Handled by OAuth2 filter spring security defined in the POM all the google and browser redirects
             .anyRequest().authenticated()
-        )
+        ) 
+        .oauth2Login(oauth2 -> oauth2
+                .successHandler(oAuth2LoginSuccessHandler)
+                .failureUrl("http://localhost:5173/login?error=oauth_failed")
+            )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

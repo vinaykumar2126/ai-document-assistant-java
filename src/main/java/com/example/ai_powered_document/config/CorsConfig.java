@@ -18,7 +18,9 @@ public class CorsConfig {
                 registry.addMapping("/**") // Apply CORS rules to all endpoints
                         .allowedOrigins("http://localhost:5173")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*"); // Allow all headers
+                        .allowedHeaders("*") // Allow all headers
+                        .allowCredentials(true) // Allow credentials such as cookies and authorization headers
+                        .maxAge(3600); // Cache pre-flight response for 1 hour
             }
         };
     }

@@ -18,8 +18,13 @@ function FileUpload({ onUploadSuccess }: FileUploadProps) {
     formData.append('file', file);
 
     try {
+      console.log('Uploading file:', file.name);
+      const token = localStorage.getItem('token');
       const response = await fetch('http://localhost:8080/api/ai/ingest/upload', {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
         body: formData,
       });
       // const result = await response.text();
