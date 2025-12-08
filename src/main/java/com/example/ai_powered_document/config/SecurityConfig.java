@@ -37,6 +37,7 @@ public class SecurityConfig {
             .cors(cors -> {})  // Enable CORS (uses your CorsConfig automatically)
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            //  JWT filter will handle authentication for protected endpoints at this pointed its routed to JwtAuthFilter.java
             .authorizeHttpRequests(auth -> auth
              .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
              .requestMatchers("/oauth/**","/login/oauth2/**").permitAll() // Handled by OAuth2 filter spring security defined in the POM all the google and browser redirects
