@@ -51,6 +51,12 @@
 			</exclusions>
 		</dependency>
 
+	<dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <scope>test</scope>
+    </dependency>
+
 <!-- OAuth -->
 	<dependency>
         <groupId>org.springframework.boot</groupId>
@@ -85,6 +91,25 @@
         <optional>true</optional>
     </dependency> -->
 
+	 <!-- PostgreSQL Driver -->
+    <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+
+	 <!-- Spring Data JPA (ORM) -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+
+	 <!-- Password Encryption -->
+    <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-crypto</artifactId>
+    </dependency>
+
 	<!-- Apache POI for DOCX -->
 	<dependency>
 		<groupId>org.apache.poi</groupId>
@@ -115,6 +140,12 @@
 		<version>0.35.0</version>
 	</dependency>
 
+	<dependency>
+        <groupId>me.paulschwarz</groupId>
+        <artifactId>spring-dotenv</artifactId>
+        <version>4.0.0</version>
+    </dependency>
+
 
 	<!-- ✔ THIS is the only test dependency you need -->
     <dependency>
@@ -123,6 +154,7 @@
         <scope>test</scope>
     </dependency>
 	</dependencies>
+
 
 	<build>
 		<plugins>
