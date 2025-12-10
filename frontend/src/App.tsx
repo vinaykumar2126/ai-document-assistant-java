@@ -6,6 +6,7 @@ const FileUpload = lazy(() => import('./components/FileUpload'));
 const ChatBox = lazy(() => import('./components/ChatBox'));
 const ChatInput = lazy(() => import('./components/ChatInput'));
 const Login = lazy(() => import('./components/Login'));
+const Register = lazy(() => import('./components/Register')); // ← ADD THIS
 const OAuthCallback = lazy(() => import('./components/OAuthCallback'));
 
 interface Message {
@@ -19,7 +20,6 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
-  // ✅ CHECK TOKEN ON APP LOAD (AUTO-LOGIN)
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -89,23 +89,42 @@ function App() {
     return <div className="loading-spinner">Checking authentication...</div>;
   }
 
-  // ✅ WRAP IN ROUTER FOR OAUTH CALLBACK ROUTE
   return (
     <Router>
       <Routes>
-        {/* ✅ OAuth Callback Route */}
+        {/* OAuth Callback Route */}
         <Route path="/oauth-callback" element={
           <Suspense fallback={<div className="loading-spinner">Loading...</div>}>
             <OAuthCallback onLoginSuccess={() => setIsLoggedIn(true)} />
           </Suspense>
         } />
 
-        {/* Main App Route */}
-        <Route path="*" element={
-          !isLoggedIn ? (
+        {/* ✅ ADD REGISTER ROUTE */}
+        <Route path="/register" element={
+          isLoggedIn ? (
+            <Navigate to="/" replace />
+          ) : (
+            <Suspense fallback={<div className="loading-spinner">Loading...</div>}>
+              <Register onRegisterSuccess={() => setIsLoggedIn(true)} />
+            </Suspense>
+          )
+        } />
+
+        {/* Login Route */}
+        <Route path="/login" element={
+          isLoggedIn ? (
+            <Navigate to="/" replace />
+          ) : (
             <Suspense fallback={<div className="loading-spinner">Loading login...</div>}>
               <Login onLoginSuccess={() => setIsLoggedIn(true)} />
             </Suspense>
+          )
+        } />
+
+        {/* Main App Route */}
+        <Route path="/" element={
+          !isLoggedIn ? (
+            <Navigate to="/login" replace />
           ) : (
             <div className="app">
               <header className="app-header">
@@ -145,6 +164,9 @@ function App() {
             </div>
           )
         } />
+
+        {/* Catch all - redirect to login */}
+        <Route path="*" element={<Navigate to={isLoggedIn ? "/" : "/login"} replace />} />
       </Routes>
     </Router>
   );

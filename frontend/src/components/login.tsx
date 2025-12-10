@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // ← ADD THIS
 import '../styles/login.css';
 import axios from 'axios';
 
@@ -11,6 +12,7 @@ function Login({ onLoginSuccess }: LoginProps) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate(); // ← ADD THIS
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,21 +24,15 @@ function Login({ onLoginSuccess }: LoginProps) {
         username,
         password,
       }); 
-      // const response = await fetch('http://localhost:8080/api/auth/login', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({ username, password }),
 
       if (response) {
         const data = response.data;
         console.log('Login response data:', data);
-        if (data.success && data.token) {
+        if (data.token) {
           localStorage.setItem('token', data.token);
           localStorage.setItem('username', username);
-          // console.log('Login successful, token stored.', + data.token);
           onLoginSuccess();
+          navigate('/'); // ← ADD THIS
         } else {
           setError(data.message || 'Login failed');
         }
@@ -51,7 +47,6 @@ function Login({ onLoginSuccess }: LoginProps) {
     }
   };
 
-   // ✅ Google OAuth login
   const handleGoogleLogin = () => {
     console.log('Redirecting to Google OAuth...');
     window.location.href = 'http://localhost:8080/oauth2/authorization/google';
@@ -100,12 +95,10 @@ function Login({ onLoginSuccess }: LoginProps) {
           </button>
         </form>
 
-        {/* ✅ DIVIDER */}
         <div className="divider">
           <span>OR</span>
         </div>
 
-        {/* ✅ GOOGLE LOGIN BUTTON */}
         <button 
           onClick={handleGoogleLogin} 
           className="google-login-button"
@@ -119,6 +112,20 @@ function Login({ onLoginSuccess }: LoginProps) {
           </svg>
           Continue with Google
         </button>
+
+        {/* ✅ ADD THIS: Link to Register */}
+        <div className="login-footer">
+          <p>
+            Don't have an account?{' '}
+            <button 
+              onClick={() => navigate('/register')} 
+              className="link-button"
+              type="button"
+            >
+              Sign Up
+            </button>
+          </p>
+        </div>
 
         <div className="login-footer">
           <p>© 2024 AI Document Assistant. All rights reserved.</p>

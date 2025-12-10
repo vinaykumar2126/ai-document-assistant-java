@@ -205,3 +205,26 @@
   width: 20px;
   height: 20px;
 }
+
+/* ...existing styles... */
+
+/* ✅ ADD THIS: Link button style */
+.link-button {
+  background: none;
+  border: none;
+  color: #4285f4;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.link-button:hover {
+  color: #2a5caa;
+}
+
+.login-footer p {
+  margin: 0.5rem 0;
+}
