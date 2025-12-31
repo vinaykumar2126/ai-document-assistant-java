@@ -16,6 +16,9 @@ pipeline {
                     sh 'docker push $DOCKER_IMAGE'
                 }
             }
+            steps {
+                echo 'Docker image pushed successfully.'
+            }
         }
     }
 }
