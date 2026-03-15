@@ -2,13 +2,13 @@ package com.example.ai_powered_document.controller;
 
 import com.example.ai_powered_document.service.DocumentIngestionService;
 import com.example.ai_powered_document.service.RagService;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/ai")
-@ConditionalOnExpression("'${gemini.api.key:}' != ''")
+@ConditionalOnBean({RagService.class, DocumentIngestionService.class})
 public class AiController {
 
     private final RagService ragService;

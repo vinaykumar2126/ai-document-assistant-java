@@ -1,6 +1,6 @@
 package com.example.ai_powered_document.service;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;
 import dev.langchain4j.chain.ConversationalRetrievalChain;
 import dev.langchain4j.model.chat.ChatLanguageModel;
@@ -10,7 +10,7 @@ import dev.langchain4j.rag.content.retriever.ContentRetriever;
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
 
 @Service
-@ConditionalOnExpression("'${gemini.api.key:}' != ''")
+@ConditionalOnBean({EmbeddingModel.class, ChatLanguageModel.class})
 public class RagService {
      private final ConversationalRetrievalChain chain;
      public RagService(EmbeddingModel embeddingModel,EmbeddingStore store,ChatLanguageModel llm){
