@@ -255,6 +255,5 @@ curl "http://localhost:8080/api/ai/ask?question=Summarize%20the%20document" \
 ## Verification
 
 ```bash
-mvn -Dtest=AiPoweredDocumentApplicationTests test
 mvn spring-boot:run
 ```
