@@ -1,7 +1,7 @@
 # AI Document Assistant
 
 <p align="center">
-  <img src="./src/main/resources/static/Chat2.png" alt="AI Document Assistant login experience" width="88%" />
+  <img src="./src/main/resources/static/Screenshot 2026-03-15 at 8.11.20 PM.png" alt="AI Document Assistant login experience" width="88%" />
 </p>
 
 <p align="center">
@@ -34,19 +34,11 @@ AI Document Assistant is built for teams who want strong engineering and standou
 <table>
   <tr>
     <td align="center"><strong>Signature Login Experience</strong></td>
-    <td align="center"><strong>Workspace Upload Flow</strong></td>
+    <td align="center"><strong>Ready-To-Chat Workspace</strong></td>
   </tr>
   <tr>
-    <td><img src="./src/main/resources/static/Chat2.png" alt="Login screen" width="100%"/></td>
-    <td><img src="./src/main/resources/static/chat1.png" alt="Upload workspace" width="100%"/></td>
-  </tr>
-  <tr>
-    <td align="center"><strong>Document Workspace</strong></td>
-    <td align="center"><strong>Chat Flow</strong></td>
-  </tr>
-  <tr>
-    <td><img src="./src/main/resources/static/chat4.java.png" alt="Document workspace" width="100%"/></td>
-    <td><img src="./src/main/resources/static/chat5.png" alt="Chat view" width="100%"/></td>
+    <td><img src="./src/main/resources/static/Screenshot 2026-03-15 at 8.11.20 PM.png" alt="Login screen" width="100%"/></td>
+    <td><img src="./src/main/resources/static/Screenshot 2026-03-15 at 8.11.41 PM.png" alt="Ready to chat workspace" width="100%"/></td>
   </tr>
 </table>
 
@@ -55,7 +47,7 @@ AI Document Assistant is built for teams who want strong engineering and standou
 This is the point where the product comes together: the document is uploaded, the workspace is active, and the assistant is already returning grounded answers from the file.
 
 <p align="center">
-  <img src="./src/main/resources/static/chat5.png" alt="AI Document Assistant ready-to-chat workspace" width="92%" />
+  <img src="./src/main/resources/static/Screenshot 2026-03-15 at 8.11.41 PM.png" alt="AI Document Assistant ready-to-chat workspace" width="92%" />
 </p>
 
 ## UI Philosophy
